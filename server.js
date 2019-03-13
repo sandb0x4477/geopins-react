@@ -8,6 +8,8 @@ import schema from './schema';
 import resolvers from './resolvers';
 import models, { sequelize } from './models';
 
+import { findOrCreateUser } from './controllers/userController';
+
 const app = express();
 const PORT = process.env.PORT || 4008;
 
@@ -18,9 +20,19 @@ const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
   context: async ({ req }) => {
-    // const authUser = await getAuthUser(req);
+    let authToken = null;
+    let currentUser = null;
+    try {
+      authToken = req.headers.authorization;
+      if (authToken) {
+        currentUser = await findOrCreateUser(authToken);
+      }
+    } catch (error) {
+      console.error(`Unable to authenticate user with token ${authToken}`);
+    }
     return {
       models,
+      currentUser,
       // SECRET,
       // authUser,
     };

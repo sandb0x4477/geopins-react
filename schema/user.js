@@ -3,13 +3,13 @@ import { gql } from 'apollo-server-express';
 export default gql`
 
   extend type Query {
-    me: String
+    me: User
   }
 
   type User {
-    id: ID!
-    name: String!
-    email: String!
+    id: ID
+    name: String
+    email: String
     picture: String
   }
 

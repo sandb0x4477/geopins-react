@@ -17,14 +17,13 @@ const sequelize = new Sequelize(
       $lte: Op.lte,
       $like: Op.like
     },
-    sync: { force: true }
+    sync: { force: false }
   }
 );
 
 const models = {
-  // Forum: sequelize.import('./forum'),
-  // Topic: sequelize.import('./topic'),
-  // Post: sequelize.import('./post'),
+  Comment: sequelize.import('./comment'),
+  Pin: sequelize.import('./pin'),
   User: sequelize.import('./user'),
 };
 

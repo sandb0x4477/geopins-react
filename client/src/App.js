@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { MDBBtn } from 'mdbreact';
 
 import './App.css';
+import Login from './components/Auth/Login';
 
 class App extends Component {
   render() {
-    return <MDBBtn color='warning'>Warning</MDBBtn>;
+    return <Login />;
   }
 }
 

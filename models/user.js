@@ -31,12 +31,6 @@ const user = (sequelize, DataTypes) => {
     // },
   });
 
-  // User.associate = models => {
-  //   User.hasMany(models.Post, { foreignKey: 'userId' });
-  //   // Post.belongsTo(models.Topic, { foreignKey: 'topicId', onDelete: 'CASCADE' });
-  //   // Post.belongsTo(models.Forum, { through: models.Topic, onDelete: 'CASCADE' });
-  // };
-
   return User;
 }
 
