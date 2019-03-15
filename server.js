@@ -33,8 +33,6 @@ const server = new ApolloServer({
     return {
       models,
       currentUser,
-      // SECRET,
-      // authUser,
     };
   },
 });

@@ -1,19 +1,17 @@
-const tempUser = {
-  id: '12312424',
-  name: 'Sandb0x',
-  email: 'test@tes.com',
-  picture: 'https://cloudinary.com/adsdasd'
-}
+import { AuthenticationError } from 'apollo-server';
 
+const authenticated = next => (parent, args, { models, currentUser }, info) => {
+  if (!currentUser) {
+    throw new AuthenticationError('You must be logged in!');
+  }
+  return next(parent, args, { models, currentUser }, info);
+};
 
 export default {
   // ===========================================================================
   // ? QUERIES
   // ===========================================================================
   Query: {
-    me: async (parent, args, { models }) => {
-      // return await models.User.findAll();
-      return tempUser;
-    },
+    me: authenticated((parent, args, { models, currentUser }, info) => currentUser),
   },
 };

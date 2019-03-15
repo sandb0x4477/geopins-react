@@ -1,30 +1,30 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { MDBBtn, MDBIcon } from 'mdbreact';
 import { GoogleLogin } from 'react-google-login';
 import { GraphQLClient } from 'graphql-request';
 
-const ME_QUERY = `{
-	me {
-    id
-    name
-    email
-    picture
-  }
-}`;
+import Context from '../../context';
+import { ME_QUERY } from '../../graphql/queries';
 
 const Login = () => {
+  const { dispatch } = useContext(Context);
+
   const onSucces = async googleUser => {
-    const idToken = googleUser.getAuthResponse().id_token;
-    console.log('idToken:', idToken);
-    const client = new GraphQLClient(process.env.REACT_APP_GRAPHQL_ENDPOINT, {
-      headers: { authorization: idToken }
-    });
-    const data = await client.request(ME_QUERY);
-    console.log('data:', data);
+    try {
+      const idToken = googleUser.getAuthResponse().id_token;
+      const client = new GraphQLClient(process.env.REACT_APP_GRAPHQL_ENDPOINT, {
+        headers: { authorization: idToken }
+      });
+      const { me } = await client.request(ME_QUERY);
+      dispatch({ type: 'LOGIN_USER', payload: me });
+      dispatch({ type: 'IS_LOGGED_IN', payload: googleUser.isSignedIn() });
+    } catch (error) {
+      onFailure(error);
+    }
   };
 
-  const onFailure = response => {
-    console.log('response:', response);
+  const onFailure = error => {
+    console.error('Error: ', error);
   };
 
   return (
@@ -37,7 +37,7 @@ const Login = () => {
         render={renderProps => (
           <MDBBtn size='sm' color='deep-orange' onClick={renderProps.onClick}>
             <MDBIcon fab icon='google-plus-g' className='mr-2' />
-            Sign In with Google
+            Login with Google
           </MDBBtn>
         )}
         buttonText='Login'

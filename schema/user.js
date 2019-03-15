@@ -11,6 +11,7 @@ export default gql`
     name: String
     email: String
     picture: String
+    createdAt: Date
   }
 
 `;
