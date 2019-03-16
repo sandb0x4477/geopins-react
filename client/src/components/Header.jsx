@@ -12,6 +12,7 @@ import {
 } from 'mdbreact';
 
 import Context from '../context';
+import Logout from './Auth/Logout';
 
 const Header = () => {
   const { state, dispatch } = useContext(Context);
@@ -46,6 +47,7 @@ const Header = () => {
                 <MDBIcon icon='sign-out-alt' />
                 &nbsp;&nbsp;Logout
               </MDBDropdownItem>
+              {/* <Logout /> */}
             </MDBDropdownMenu>
           </MDBDropdown>
         </MDBNavItem>

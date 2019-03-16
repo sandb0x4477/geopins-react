@@ -20,7 +20,7 @@ export default gql`
     image: String
     latitude: Float
     longitude: Float
-    # author: User
+    user: User
     # comments: [Comment]
   }
 

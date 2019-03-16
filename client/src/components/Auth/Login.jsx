@@ -12,6 +12,7 @@ const Login = () => {
   const onSucces = async googleUser => {
     try {
       const idToken = googleUser.getAuthResponse().id_token;
+      console.log('idToken:', idToken);
       const client = new GraphQLClient(process.env.REACT_APP_GRAPHQL_ENDPOINT, {
         headers: { authorization: idToken }
       });

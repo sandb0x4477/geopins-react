@@ -3,7 +3,8 @@ import { createContext } from 'react';
 const Contex = createContext({
   currentUser: null,
   isAuth: false,
-  draft: null
+  draft: null,
+  currentPin: null
 });
 
 export default Contex;

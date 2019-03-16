@@ -9,7 +9,7 @@ import MapGL, {
 
 import Context from '../context';
 
-import PinIcon from './Auth/PinIcon';
+import PinIcon from './PinIcon';
 
 const INITIAL_VIEWPORT = {
   latitude: 51.507351,
@@ -48,37 +48,47 @@ const MapUrbica = () => {
     });
   };
 
-  return (
-    <MapGL
-      style={{
-        height: 'calc(100vh - 64px)',
-        width: '100vw'
-      }}
-      mapStyle='mapbox://styles/mapbox/streets-v9'
-      accessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
-      latitude={viewport.latitude}
-      longitude={viewport.longitude}
-      zoom={viewport.zoom}
-      onViewportChange={newViewport => setViewport(newViewport)}
-      onClick={handleMapClick}>
-      <NavigationControl showCompass showZoom position='top-right' />
-      <GeolocateControl position='top-left' />
+  if (!state.isAuth) {
+    return <div>Loading....</div>;
+  } else {
+    return (
+      <MapGL
+        style={{
+          height: 'calc(100vh - 204px)',
+          width: '100vw'
+        }}
+        mapStyle='mapbox://styles/mapbox/streets-v9'
+        accessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
+        latitude={viewport.latitude}
+        longitude={viewport.longitude}
+        zoom={viewport.zoom}
+        onViewportChange={newViewport => setViewport(newViewport)}
+        onClick={handleMapClick}>
+        {/* <NavigationControl showCompass showZoom position='top-right' /> */}
+        <GeolocateControl position='top-left' />
 
-      {/* User location Pin */}
-      {userPosition && (
-        <Marker longitude={userPosition.longitude} latitude={userPosition.latitude}>
-          <PinIcon name='map-pin' size='3x' className='red-text' />
-        </Marker>
-      )}
+        {/* User location Pin */}
+        {userPosition && (
+          <Marker
+            longitude={userPosition.longitude}
+            latitude={userPosition.latitude}
+            offset={[0, -18]}>
+            <PinIcon name='map-pin' size='3x' className='red-text' />
+          </Marker>
+        )}
 
-      {/* Draft Pin Location */}
-      {state.draft && (
-        <Marker longitude={state.draft.longitude} latitude={state.draft.latitude}>
-          <PinIcon name='map-marker-alt' size='2x' className='indigo-text' />
-        </Marker>
-      )}
-    </MapGL>
-  );
+        {/* Draft Pin Location */}
+        {state.draft && (
+          <Marker
+            longitude={state.draft.longitude}
+            latitude={state.draft.latitude}
+            offset={[0, -18]}>
+            <PinIcon name='map-marker-alt' size='3x' className='indigo-text' />
+          </Marker>
+        )}
+      </MapGL>
+    );
+  }
 };
 
 export default MapUrbica;
