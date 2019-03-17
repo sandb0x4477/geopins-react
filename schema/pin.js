@@ -4,7 +4,7 @@ export default gql`
 
   extend type Query {
     # getPins: [Pin!]
-    getPins: String
+    getPins: [Pin]
   }
 
   extend type Mutation {

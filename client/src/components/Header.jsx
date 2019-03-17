@@ -12,7 +12,7 @@ import {
 } from 'mdbreact';
 
 import Context from '../context';
-import Logout from './Auth/Logout';
+// import Logout from './Auth/Logout';
 
 const Header = () => {
   const { state, dispatch } = useContext(Context);

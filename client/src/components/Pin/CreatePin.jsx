@@ -2,10 +2,12 @@ import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { MDBIcon, MDBRow, MDBCol, MDBBtn } from 'mdbreact';
 
+import { useClient } from '../../client';
 import Context from '../../context';
 import { CREATE_PIN_MUTATION } from '../../graphql/mutations';
 
 const CreatePin = () => {
+  const client = useClient();
   const { state, dispatch } = useContext(Context);
   const [title, setTitle] = useState('');
   const [image, setImage] = useState('');
@@ -19,9 +21,38 @@ const CreatePin = () => {
     dispatch({ type: 'DELETE_DRAFT' });
   };
 
-  const handleSubmit = event => {
+  const handleImageUpload = async () => {
+    const data = new FormData();
+    data.append('file', image);
+    data.append('upload_preset', 'geopins');
+    data.append('cloud_name', 'dbb4ncb3t');
+    const res = await axios.post(
+      'https://api.cloudinary.com/v1_1/dbb4ncb3t/image/upload',
+      data,
+      { headers: { 'X-Requested-With': 'XMLHttpRequest' } }
+    );
+    return res.data.url;
+  };
+
+  const handleSubmit = async event => {
     event.preventDefault();
-    setSubmitting(true);
+    try {
+      setSubmitting(true);
+      const url = await handleImageUpload();
+      const { latitude, longitude } = state.draft;
+      const variables = {
+        title,
+        image: url,
+        content,
+        latitude,
+        longitude
+      };
+      await client.request(CREATE_PIN_MUTATION, variables);
+      handleDeleteDraft();
+    } catch (error) {
+      setSubmitting(false);
+      console.error('Error:', error);
+    }
   };
 
   return (

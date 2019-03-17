@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { MDBContainer } from 'mdbreact';
 
 import './App.css';
 import Header from './components/Header';
