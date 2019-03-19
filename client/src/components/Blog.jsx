@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import { MDBContainer } from 'mdbreact';
 
 import NoContent from './Pin/NoContent';
 import CreatePin from './Pin/CreatePin';
@@ -21,9 +20,9 @@ const Blog = () => {
   }
 
   return (
-    <MDBContainer style={{ minHeight: '140px', width: '100vw' }}>
-      <BlogContent />
-    </MDBContainer>
+    // <MDBContainer>
+    <BlogContent />
+    // </MDBContainer>
   );
 };
 

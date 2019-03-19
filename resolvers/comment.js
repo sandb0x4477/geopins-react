@@ -12,8 +12,8 @@ export default {
   // ? QUERIES
   // ===========================================================================
   Query: {
-    getPins: async (parent, args, { models }) => {
-      return await models.Pin.findAll();
+    getComments: async (parent, args, { models }) => {
+      return await models.Comment.findAll();
     },
   },
 
@@ -21,41 +21,40 @@ export default {
   // ? MUTATIONS
   // =============================================================================
   Mutation: {
-    createPin: authenticated(async (parent, args, { models, currentUser }) => {
+    createComment: authenticated(async (parent, args, { models, currentUser }) => {
       console.log('currentUser:', currentUser);
-      const newPin = {
-        ...args.input,
+      const newComment = {
+        ...args,
         userId: currentUser.id,
       };
 
-      return await models.Pin.create(newPin);
+      return await models.Comment.create(newComment);
     }),
-    deletePin: authenticated(async (parent, args, { models, currentUser }) => {
-      const pinToRemove = await models.Pin.findOne({ where: { id: args.pinId } });
-      if (pinToRemove.userId !== currentUser.id) {
-        throw new AuthenticationError('Unauthorized!');
-      }
-      await models.Pin.destroy({ where: { id: args.pinId } });
-      return pinToRemove;
-    }),
+    // deletePin: authenticated(async (parent, args, { models, currentUser }) => {
+    //   const pinToRemove = await models.Pin.findOne({ where: { id: args.pinId } });
+    //   if (pinToRemove.userId !== currentUser.id) {
+    //     throw new AuthenticationError('Unauthorized!');
+    //   }
+    //   await models.Pin.destroy({ where: { id: args.pinId } });
+    //   return pinToRemove;
+    // }),
   },
 
-  Pin: {
-    user: async (pin, args, { models }) => {
+  Comment: {
+    user: async (comment, args, { models }) => {
       return await models.User.findOne({
         where: {
-          id: pin.userId,
+          id: comment.userId,
         }
       });
     },
-    comments: async (pin, args, { models }) => {
-      console.log('pin:', pin);
-      return await models.Comment.findAll({
-        where: {
-          pinId: pin.id,
-        }
-      });
-    },
+    // comments: async (pin, args, { models }) => {
+    //   return await models.Comment.findAll({
+    //     where: {
+    //       pinId: pin.pinId,
+    //     }
+    //   });
+    // },
     // customer: async (rental, args, { models }) => {
     //   return await models.Customer.findOne({
     //     where: {

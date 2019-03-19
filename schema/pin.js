@@ -21,7 +21,7 @@ export default gql`
     latitude: Float
     longitude: Float
     user: User
-    # comments: [Comment]
+    comments: [Comment]
   }
 
   input CreatePinInput {

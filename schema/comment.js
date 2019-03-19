@@ -4,11 +4,11 @@ export default gql`
 
   extend type Query {
     # getPins: [Pin!]
-    getComments: String
+    getComments: [Comment]
   },
 
   extend type Mutation {
-    createComment(pinId: ID!, userId: ID!, text: String!): Comment
+    createComment(pinId: ID!, text: String!): Comment
   },
 
   type Comment {

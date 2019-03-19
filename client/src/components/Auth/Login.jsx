@@ -5,6 +5,7 @@ import { GraphQLClient } from 'graphql-request';
 
 import Context from '../../context';
 import { ME_QUERY } from '../../graphql/queries';
+import { BASE_URL } from '../../client';
 
 const Login = () => {
   const { dispatch } = useContext(Context);
@@ -13,7 +14,7 @@ const Login = () => {
     try {
       const idToken = googleUser.getAuthResponse().id_token;
       console.log('idToken:', idToken);
-      const client = new GraphQLClient(process.env.REACT_APP_GRAPHQL_ENDPOINT, {
+      const client = new GraphQLClient(BASE_URL, {
         headers: { authorization: idToken }
       });
       const { me } = await client.request(ME_QUERY);

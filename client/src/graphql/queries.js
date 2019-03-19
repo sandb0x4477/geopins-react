@@ -26,16 +26,15 @@ export const GET_PINS_QUERY = `
         email
         picture
       }
+      comments {
+        id
+        text
+        createdAt
+        user {
+          name
+          picture
+        }
+      }
     }
   }
 `;
-
-// comments {
-//   text
-//   createdAt
-//   author {
-//     _id
-//     name
-//     picture
-//   }
-// }

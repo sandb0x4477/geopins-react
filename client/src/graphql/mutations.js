@@ -31,3 +31,47 @@ export const CREATE_PIN_MUTATION = `
     }
   }
 `;
+
+export const DELETE_PIN_MUTATION = `
+  mutation(
+    $pinId: ID!
+  ) {
+    deletePin(
+        pinId: $pinId
+    ) {
+      id
+      createdAt
+      title
+      image
+      content
+      latitude
+      longitude
+      user {
+        id
+        name
+        email
+        picture
+      }
+    }
+  }
+`;
+
+export const CREATE_COMMENT_MUTATION = `
+  mutation(
+    $pinId: ID!
+    $text: String!
+  ) {
+    createComment(
+        pinId: $pinId
+        text: $text
+    ) {
+      id
+      text
+      createdAt
+      user {
+        name
+        picture
+      }
+    }
+  }
+`;

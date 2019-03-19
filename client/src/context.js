@@ -5,7 +5,11 @@ const Contex = createContext({
   isAuth: false,
   draft: null,
   pins: [],
-  currentPin: null
+  currentPin: null,
+  mapStyle: {
+    height: 'calc(100vh - 124px)',
+    width: '100vw'
+  }
 });
 
 export default Contex;
