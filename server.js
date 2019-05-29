@@ -3,6 +3,7 @@ import cors from 'cors';
 import express from 'express';
 import { bodyParserGraphQL } from 'body-parser-graphql';
 import { ApolloServer } from 'apollo-server-express';
+import http from 'http';
 
 import schema from './schema';
 import resolvers from './resolvers';
@@ -19,28 +20,39 @@ app.use(bodyParserGraphQL());
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
-  context: async ({ req }) => {
-    let authToken = null;
-    let currentUser = null;
-    try {
-      authToken = req.headers.authorization;
-      if (authToken) {
-        currentUser = await findOrCreateUser(authToken);
-      }
-    } catch (error) {
-      console.error(`Unable to authenticate user with token ${authToken}`);
+  context: async ({ req, connection }) => {
+    if (connection) {
+      return {
+        models,
+      };
     }
-    return {
-      models,
-      currentUser,
-    };
+
+    if (req) {
+      let authToken = null;
+      let currentUser = null;
+      try {
+        authToken = req.headers.authorization;
+        if (authToken) {
+          currentUser = await findOrCreateUser(authToken);
+        }
+      } catch (error) {
+        console.error(`Unable to authenticate user with token ${authToken}`);
+      }
+      return {
+        models,
+        currentUser,
+      };
+    }
   },
 });
 
 server.applyMiddleware({ app, path: '/graphql', cors: false });
 
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
+
 sequelize.sync().then(async () => {
-  app.listen({ port: PORT }, () => {
+  httpServer.listen({ port: PORT }, () => {
     console.log(`Apollo Server on http://localhost:${PORT}/graphql`);
   });
 });

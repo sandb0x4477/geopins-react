@@ -1,4 +1,7 @@
-import { AuthenticationError } from 'apollo-server';
+import { AuthenticationError, PubSub } from 'apollo-server';
+
+const pubsub = new PubSub();
+const PIN_UPDATED = "PIN_UPDATED";
 
 const authenticated = next => (parent, args, { models, currentUser }, info) => {
   if (!currentUser) {
@@ -27,17 +30,10 @@ export default {
         ...args,
         userId: currentUser.id,
       };
-
-      return await models.Comment.create(newComment);
+      const commentToReturn = await models.Comment.create(newComment);
+      pubsub.publish(PIN_UPDATED, { commentToReturn });
+      return commentToReturn;
     }),
-    // deletePin: authenticated(async (parent, args, { models, currentUser }) => {
-    //   const pinToRemove = await models.Pin.findOne({ where: { id: args.pinId } });
-    //   if (pinToRemove.userId !== currentUser.id) {
-    //     throw new AuthenticationError('Unauthorized!');
-    //   }
-    //   await models.Pin.destroy({ where: { id: args.pinId } });
-    //   return pinToRemove;
-    // }),
   },
 
   Comment: {
@@ -48,19 +44,11 @@ export default {
         }
       });
     },
-    // comments: async (pin, args, { models }) => {
-    //   return await models.Comment.findAll({
-    //     where: {
-    //       pinId: pin.pinId,
-    //     }
-    //   });
-    // },
-    // customer: async (rental, args, { models }) => {
-    //   return await models.Customer.findOne({
-    //     where: {
-    //       id: rental.customerId,
-    //     }
-    //   });
-    // }
+  },
+
+  Subscription: {
+    pinUpdated: {
+      subscribe: () => pubsub.asyncIterator(PIN_UPDATED)
+    }
   },
 };

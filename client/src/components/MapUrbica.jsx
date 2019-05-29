@@ -2,12 +2,18 @@ import React, { useState, useEffect, useContext } from 'react';
 import { MDBIcon, MDBBtn } from 'mdbreact';
 import MapGL, { GeolocateControl, Marker, Popup } from '@urbica/react-map-gl';
 import differenceInMinutes from 'date-fns/difference_in_minutes';
+import { Subscription } from 'react-apollo';
 
 import { useClient } from '../client';
 import { GET_PINS_QUERY } from '../graphql/queries';
 import { DELETE_PIN_MUTATION } from '../graphql/mutations';
 import Context from '../context';
 import PinIcon from './PinIcon';
+import {
+  PIN_ADDED_SUBSCRIPTION
+  // PIN_UPDATED_SUBSCRIPTION,
+  // PIN_DELETED_SUBSCRIPTION
+} from '../graphql/subscriptions';
 
 const INITIAL_VIEWPORT = {
   latitude: 51.507351,
@@ -82,76 +88,88 @@ const MapUrbica = () => {
   const isOwner = () => state.currentUser.id === popup.user.id;
 
   return (
-    <MapGL
-      style={state.mapStyle}
-      mapStyle='mapbox://styles/mapbox/streets-v9'
-      accessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
-      latitude={viewport.latitude}
-      longitude={viewport.longitude}
-      zoom={viewport.zoom}
-      onViewportChange={newViewport => setViewport(newViewport)}
-      onClick={handleMapClick}>
-      {/* <NavigationControl showCompass showZoom position='top-right' /> */}
-      <GeolocateControl position='top-left' />
+    <>
+      <MapGL
+        style={state.mapStyle}
+        mapStyle='mapbox://styles/mapbox/streets-v9'
+        accessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
+        latitude={viewport.latitude}
+        longitude={viewport.longitude}
+        zoom={viewport.zoom}
+        onViewportChange={newViewport => setViewport(newViewport)}
+        onClick={handleMapClick}>
+        {/* <NavigationControl showCompass showZoom position='top-right' /> */}
+        <GeolocateControl position='top-left' />
 
-      {/* User location Pin */}
-      {userPosition && (
-        <Marker
-          longitude={userPosition.longitude}
-          latitude={userPosition.latitude}
-          offset={[0, -18]}>
-          <PinIcon name='map-pin' size='3x' className='blue-text' />
-        </Marker>
-      )}
+        {/* User location Pin */}
+        {userPosition && (
+          <Marker
+            longitude={userPosition.longitude}
+            latitude={userPosition.latitude}
+            offset={[0, -18]}>
+            <PinIcon name='map-pin' size='3x' className='blue-text' />
+          </Marker>
+        )}
 
-      {/* Draft Pin Location */}
-      {state.draft && (
-        <Marker
-          longitude={state.draft.longitude}
-          latitude={state.draft.latitude}
-          offset={[0, -18]}>
-          <PinIcon name='map-marker-alt' size='3x' className='indigo-text' />
-        </Marker>
-      )}
+        {/* Draft Pin Location */}
+        {state.draft && (
+          <Marker
+            longitude={state.draft.longitude}
+            latitude={state.draft.latitude}
+            offset={[0, -18]}>
+            <PinIcon name='map-marker-alt' size='3x' className='indigo-text' />
+          </Marker>
+        )}
 
-      {/* Created Pins */}
-      {state.pins.map(pin => (
-        <Marker
-          key={pin.id}
-          longitude={pin.longitude}
-          latitude={pin.latitude}
-          offset={[0, -18]}>
-          <PinIcon
-            name='map-marker-alt'
-            size='2x'
-            className={highlightNewPin(pin)}
-            onClick={() => handleSelectPin(pin)}
-          />
-        </Marker>
-      ))}
+        {/* Created Pins */}
+        {state.pins.map(pin => (
+          <Marker
+            key={pin.id}
+            longitude={pin.longitude}
+            latitude={pin.latitude}
+            offset={[0, -18]}>
+            <PinIcon
+              name='map-marker-alt'
+              size='2x'
+              className={highlightNewPin(pin)}
+              onClick={() => handleSelectPin(pin)}
+            />
+          </Marker>
+        ))}
 
-      {/* Popup */}
-      {popup && (
-        <Popup
-          longitude={popup.longitude}
-          latitude={popup.latitude}
-          closeButton={true}
-          closeOnClick={false}
-          offset={[0, -22]}
-          onClose={handlePopupClose}>
-          <img className='popup-image' src={popup.image} alt={popup.title} />
-          <h5 className='h5-responsive mb-0 pt-1'>{popup.title}</h5>
+        {/* Popup */}
+        {popup && (
+          <Popup
+            longitude={popup.longitude}
+            latitude={popup.latitude}
+            closeButton={true}
+            closeOnClick={false}
+            offset={[0, -22]}
+            onClose={handlePopupClose}>
+            <img className='popup-image' src={popup.image} alt={popup.title} />
+            <h5 className='h5-responsive mb-0 pt-1'>{popup.title}</h5>
 
-          {isOwner() && (
-            <div className='text-center mt-1'>
-              <MDBBtn size='sm' color='red' onClick={() => handleDeletePin(popup)}>
-                <MDBIcon icon='trash-alt' />
-              </MDBBtn>
-            </div>
-          )}
-        </Popup>
-      )}
-    </MapGL>
+            {isOwner() && (
+              <div className='text-center mt-1'>
+                <MDBBtn size='sm' color='red' onClick={() => handleDeletePin(popup)}>
+                  <MDBIcon icon='trash-alt' />
+                </MDBBtn>
+              </div>
+            )}
+          </Popup>
+        )}
+      </MapGL>
+
+      {/* Subscriptions for Creating / Updating / Deleting Pins */}
+      <Subscription
+        subscription={PIN_ADDED_SUBSCRIPTION}
+        onSubscriptionData={({ subscriptionData }) => {
+          const { pinAdded } = subscriptionData.data;
+          console.log({ pinAdded });
+          dispatch({ type: 'CREATE_PIN', payload: pinAdded });
+        }}
+      />
+    </>
   );
 };
 

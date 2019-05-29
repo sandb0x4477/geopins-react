@@ -7,6 +7,11 @@ import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
+import { ApolloProvider } from 'react-apollo';
+import { ApolloClient } from 'apollo-client';
+import { WebSocketLink } from 'apollo-link-ws';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+
 import Context from './context';
 import reducer from './reducer';
 
@@ -15,6 +20,20 @@ import ProtectedRoute from './ProtectedRoute';
 import Splash from './Splash';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+
+const GRAPHQL_ENDPOINT = 'ws://localhost:4008/graphql';
+
+const wsLink = new WebSocketLink({
+  uri: GRAPHQL_ENDPOINT,
+  options: {
+    reconnect: true
+  }
+});
+
+const client = new ApolloClient({
+  link: wsLink,
+  cache: new InMemoryCache()
+});
 
 const rootEl = document.getElementById('root');
 
@@ -26,12 +45,14 @@ const Root = () => {
 
   return (
     <Router>
-      <Context.Provider value={{ state, dispatch }}>
-        <Switch>
-          <ProtectedRoute exact path='/' component={App} />
-          <Route path='/login' component={Splash} />
-        </Switch>
-      </Context.Provider>
+      <ApolloProvider client={client}>
+        <Context.Provider value={{ state, dispatch }}>
+          <Switch>
+            <ProtectedRoute exact path='/' component={App} />
+            <Route path='/login' component={Splash} />
+          </Switch>
+        </Context.Provider>
+      </ApolloProvider>
     </Router>
   );
 };

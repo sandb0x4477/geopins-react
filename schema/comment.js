@@ -18,4 +18,8 @@ export default gql`
     user: User
   }
 
+  extend type Subscription {
+    pinUpdated: Comment
+  }
+
 `;

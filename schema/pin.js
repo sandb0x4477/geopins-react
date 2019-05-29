@@ -32,4 +32,9 @@ export default gql`
     longitude: Float
   }
 
+  extend type Subscription {
+    pinAdded: Pin
+    pinDeleted: Pin
+  }
+
 `;

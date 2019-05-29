@@ -11,7 +11,7 @@ const PinContent = () => {
   const { title, content, createdAt, user, comments } = state.currentPin;
 
   return (
-    <MDBContainer className='text-center'>
+    <MDBContainer className='text-center mt-2'>
       <h5 className='blue-text'>
         <strong>{title}</strong>
       </h5>
