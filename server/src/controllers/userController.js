@@ -3,7 +3,7 @@ import { OAuth2Client } from 'google-auth-library';
 
 const client = new OAuth2Client(process.env.OAUTH_CLIENT_ID);
 
-exports.findOrCreateUser = async token => {
+const findOrCreateUser = async token => {
   const googleUser = await verifyAuthToken(token);
   const user = await checkIfUserExists(googleUser.email);
   // console.log('user:', user);
@@ -37,3 +37,5 @@ const createNewUser = async googleUser => {
   const user = { name, email, picture };
   return await models.User.create(user);
 };
+
+export default findOrCreateUser;

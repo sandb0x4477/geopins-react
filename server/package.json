@@ -1,0 +1,48 @@
+{
+  "name": "geopin",
+  "version": "1.0.0",
+  "main": "server.js",
+  "dependencies": {
+    "@babel/cli": "^7.4.4",
+    "apollo-server": "^2.6.3",
+    "apollo-server-express": "^2.6.3",
+    "axios": "^0.19.0",
+    "body-parser": "^1.19.0",
+    "body-parser-graphql": "^1.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
+    "google-auth-library": "^4.2.1",
+    "graphql": "^14.3.1",
+    "graphql-iso-date": "^3.6.1",
+    "graphql-tag": "^2.10.1",
+    "lodash": "^4.17.11",
+    "pg": "^7.11.0",
+    "sequelize": "^5.8.9",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/node": "^7.4.5",
+    "@babel/plugin-transform-runtime": "^7.4.4",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/runtime": "^7.4.5",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-graphql-tag": "^2.4.0",
+    "install": "^0.12.2",
+    "nodemon": "^1.19.1",
+    "npm": "^6.9.0",
+    "parcel-bundler": "^1.12.3",
+    "rimraf": "^2.6.3",
+    "webpack": "^4.34.0",
+    "webpack-cli": "^3.3.4",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "scripts": {
+    "start": "nodemon --exec babel-node ./src/server.js",
+    "build": "rimraf dist/ && webpack -p",
+    "serve": "node dist/server.js",
+    "generate": "gql-gen",
+    "build:prod": "rimraf dist/ && babel src -s -D -d dist"
+  }
+}

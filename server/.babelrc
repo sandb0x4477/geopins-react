@@ -9,5 +9,5 @@
       }
     ]
   ],
-  "ignore": ["node_modules", "client"]
+  "plugins": ["@babel/plugin-transform-runtime", "graphql-tag"],
 }

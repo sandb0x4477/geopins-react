@@ -9,7 +9,7 @@ import schema from './schema';
 import resolvers from './resolvers';
 import models, { sequelize } from './models';
 
-import { findOrCreateUser } from './controllers/userController';
+import findOrCreateUser from './controllers/userController';
 
 const app = express();
 const PORT = process.env.PORT || 4008;
@@ -46,7 +46,7 @@ const server = new ApolloServer({
   },
 });
 
-server.applyMiddleware({ app, path: '/graphql', cors: false });
+server.applyMiddleware({ app, path: '/graphql', cors: true });
 
 const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
